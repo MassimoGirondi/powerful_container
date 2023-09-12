@@ -1,0 +1,54 @@
+version: '3.1'
+services:
+  server:
+    image: girondi/super_container:latest
+    hostname: server
+    container_name: csd_server
+      #networks:
+      #rdma_net1:
+      #csd_server:
+      #default:
+      #network_mode: host
+      #privileged: true
+    deploy:
+      resources:
+        reservations:
+          #cpus:
+          devices:
+            - driver: nvidia
+              #count: 1
+              device_ids: [ "${GPU_ID}" ]
+              capabilities: [gpu]
+        #cap_add:
+        #- NET_ADMIN
+    devices:
+      - ${SERVER_IBDEV}
+      - /dev/infiniband/rdma_cm
+  client:
+    image: girondi/super_container:latest
+    hostname: client
+    container_name: csd_client
+      #networks:
+      #rdma_net1:
+      #csd_client:
+      #  default:
+      #network_mode: host
+    stdin_open: true
+      # privileged: true
+      #deploy:
+      #resources:
+      #reservations:
+          #cpus:
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - ${CLIENT_IBDEV}
+      - /dev/infiniband/rdma_cm
+  tcpdump_server:
+    image: mellanox/tcpdump-rdma 
+    command: tcpdump -i mlx5_2 -vvv -l -n 
+    privileged: true
+    network_mode: host
+    volumes:
+      - /dev/infiniband
+
