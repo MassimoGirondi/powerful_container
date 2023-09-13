@@ -15,7 +15,6 @@ COPY  --from=girondi/rdma_core /rdma-core /rdma-core
 
 RUN apt -y install openssh-server supervisor
 RUN mkdir /var/run/sshd
-RUN echo 'root:root' | chpasswd
 RUN sed -i 's/# *PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
@@ -35,15 +34,22 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #RUN groupadd -g $SUPERVISOR_GID supervisord && useradd -m -s /bin/bash  -d /home/supervisord -u $SUPERVISOR_UID supervisord -g supervisord
 RUN mkdir -p /var/log/supervisor && chmod 777 -R /var/log/ 
 
-RUN groupadd -g 999999 csd_23 && useradd -m -s /bin/bash  -d /home/csd_23 -u 999999 csd_23 -g csd_23
-RUN echo 'csd_23:csd_23' | chpasswd
+ARG USER=user
+ARG PASSWORD=password
+ARG ROOTPASSWORD=root
+ARG USERID=999999
+RUN groupadd -g $USERID $USER
+RUN useradd -m -s /bin/bash  -d /home/$USER -u $USERID -g $USER $USER
+RUN echo "$USER:$PASSWORD" | chpasswd
+RUN echo "root:$ROOTPASSWORD" | chpasswd
 
 # Cleanup
 RUN rm -rf /var/apt
 
+RUN mkdir -p /workspace /home/$USER && chmod 777 /workspace /home/$USER
 WORKDIR /workspace
 VOLUME /workspace
-VOLUME /home/csd_23
+VOLUME /home/$USER
 EXPOSE 22/tcp
 #USER supervisord
 CMD ["/usr/bin/supervisord"]
