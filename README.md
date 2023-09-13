@@ -40,8 +40,8 @@ By embedding ssh in each container (**which is a bad practice**), users can ssh 
 - Assing the interfaces `sudo ./assign_interfaces.sh`
 - Connect to the containers with `ssh user@172.31.199.{1,2}`
 - The two containers should be able to reach each other with the IPs in `192.168.199.0/24`
-
-# License
-
+- So, from a remote machine, you can reach them as
+	ssh -J user@host_ip user@192.168.199.{1,2}
+- Users, and passwords, are set in the .env file.
 
 The code in this repository is licensed under the GNU Public License v3, see LICENSE to know more.

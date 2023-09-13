@@ -23,15 +23,12 @@ services:
               #count: 1
               device_ids: [ "${GPU_ID}" ]
               capabilities: [gpu]
-        #cap_add:
-        #- NET_ADMIN
-        #user: ${UID}:${GID}
     volumes:
       - ./workspace:/workspace
-      - ./home:/home/csd_23
+      - ./home:/home/${DOCKERUSER}
     devices:
       - ${SERVER_IBDEV}
-      - /dev/infiniband/rdma_cm
+      #- /dev/infiniband/rdma_cm
     restart: unless-stopped
   client:
     image: girondi/super_container:latest
@@ -45,18 +42,19 @@ services:
     mem_reservation: 8G
     devices:
       - ${CLIENT_IBDEV}
-      - /dev/infiniband/rdma_cm
+        #- /dev/infiniband/rdma_cm
     volumes:
       - ./workspace:/workspace
-      - ./home:/home/csd_23
+      - ./home:/home/${DOCKERUSER}
     restart: unless-stopped
-  tcpdump_server:
-    image: mellanox/tcpdump-rdma 
-    command: tcpdump -i mlx5_2 -vvv -l -n 
-    privileged: true
-    network_mode: host
-    volumes:
-      - /dev/infiniband
+      #  tcpdump_server:
+      #image: mellanox/tcpdump-rdma 
+      #command: tcpdump -i mlx5_2 -vvv -l -n 
+      #privileged: true
+      #network_mode: host
+      #volumes:
+      #- /dev/infiniband
+      #privileged: true
 networks:
   csd_net:
     driver: bridge
