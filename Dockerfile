@@ -14,9 +14,10 @@ RUN wget https://raw.githubusercontent.com/Mellanox/container_scripts/master/ibd
 #RUN git clone https://github.com/linux-rdma/rdma-core && cd rdma-core && ./build.sh
 COPY  --from=girondi/rdma_core /rdma-core /rdma-core
 
-RUN apt -y install openssh-server supervisor
+RUN apt -y install openssh-server supervisor rsyslog
 RUN mkdir /var/run/sshd
 RUN sed -i 's/# *PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN echo "PubkeyAuthentication yes\nAuthorizedKeysFile  %h/.ssh/authorized_keys\n SyslogFacility local3" >> /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
@@ -47,7 +48,7 @@ RUN echo "root:$ROOTPASSWORD" | chpasswd
 # Cleanup
 RUN rm -rf /var/apt
 
-RUN mkdir -p /workspace /home/$DOCKERUSER && chmod 777 /workspace /home/$DOCKERUSER
+RUN mkdir -p /workspace /home/$DOCKERUSER && chmod 777 /workspace && chmod 755 /home/$DOCKERUSER
 WORKDIR /workspace
 VOLUME /workspace
 VOLUME /home/$DOCKERUSER
