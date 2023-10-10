@@ -3,8 +3,11 @@ LABEL org.opencontainers.image.authors="girondi@kth.se"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Most of these dependencies are not need in the base image.
+# Although, it is somethow useful to install them early, and in case just speed-up the steps in the next containers
 RUN apt update
-RUN apt -y install iproute2 iputils-ping ethtool tcpdump nvtop  iperf iperf3 fping pciutils curl wget git cmake gdb vim linux-tools-common linux-tools-generic linux-tools-`uname -r`  binutils build-essential  unzip
+RUN apt -y install iproute2 iputils-ping ethtool tcpdump nvtop  iperf iperf3 fping pciutils curl wget git cmake gdb vim linux-tools-common linux-tools-generic binutils build-essential  unzip
+#RUN apt -y install linux-tools-`uname -r`
 RUN apt -y install stress htop atop nload nethogs nvtop s-tui
 RUN apt -y install python3 pkg-config libnl-3-dev libnl-route-3-dev python3-setuptools libtinfo-dev libedit-dev libxml2-dev
 RUN apt -y install ibverbs-providers  rdma-core perftest ibverbs-utils ibverbs-utils
@@ -29,7 +32,7 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 
 ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY res/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 #ENV SUPERVISOR_UID=123123
 #ENV SUPERVISOR_GID=123123
