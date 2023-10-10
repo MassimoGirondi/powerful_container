@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   server:
-    image: girondi/super_container:latest
+    image: girondi/super_container_torch:latest
     hostname: server
     container_name: csd_server
     networks:
@@ -31,7 +31,7 @@ services:
       #- /dev/infiniband/rdma_cm
     restart: unless-stopped
   client:
-    image: girondi/super_container:latest
+    image: girondi/super_container_torch:latest
     hostname: client
     container_name: csd_client
     networks:

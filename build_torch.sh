@@ -1,6 +1,7 @@
 #!/bin/bash
 source .env
-docker build . -t girondi/super_container:latest \
+docker build . -t girondi/super_container_torch:latest \
+	-f torch.Dockerfile \
 	$@ \
 	--build-arg DOCKERUSER=$DOCKERUSER \
 	--build-arg USERID=$USERID \
