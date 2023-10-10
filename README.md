@@ -14,6 +14,10 @@ We don't want to give root privileges to everyone.
 
 And we need some RDMA/DPDK support.
 
+Most of the material in this repository has been developed in the context of the Communication Systems Design @ KTH, 2023 iteration.
+The purpose was to give a somehow limited access to a beefy machine to a set of students developing RDMA- and GPU-enabled applications.
+
+
 # The solution
 
 Docker is used as undelying container technology.
@@ -43,5 +47,8 @@ By embedding ssh in each container (**which is a bad practice**), users can ssh 
 - So, from a remote machine, you can reach them as
 	ssh -J user@host_ip user@192.168.199.{1,2}
 - Users, and passwords, are set in the .env file.
+
+
+# License
 
 The code in this repository is licensed under the GNU Public License v3, see LICENSE to know more.
