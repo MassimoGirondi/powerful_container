@@ -11,7 +11,11 @@ RUN apt -y install iproute2 iputils-ping ethtool tcpdump nvtop  iperf iperf3 fpi
 RUN apt -y install stress htop atop nload nethogs nvtop s-tui
 RUN apt -y install python3 pkg-config libnl-3-dev libnl-route-3-dev python3-setuptools libtinfo-dev libedit-dev libxml2-dev
 RUN apt -y install ibverbs-providers  rdma-core perftest ibverbs-utils ibverbs-utils
-RUN apt -y install nvidia-cuda-toolkit python3-pip
+RUN cd /tmp && wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb && dpkg -i cuda-keyring_1.1-1_all.deb
+RUN echo "deb [signed-by=/usr/share/keyrings/cuda-archive-keyring.gpg] https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /" | tee /etc/apt/sources.list.d/cuda-ubuntu2204-x86_64.list
+RUN apt update
+RUN apt -y install cuda-toolkit
+RUN apt -y install python3-pip
 RUN wget https://raw.githubusercontent.com/Mellanox/container_scripts/master/ibdev2netdev -O /usr/bin/ibdev2netdev && chmod +x /usr/bin/ibdev2netdev
 
 #RUN git clone https://github.com/linux-rdma/rdma-core && cd rdma-core && ./build.sh
