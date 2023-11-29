@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   server:
-    image: girondi/super_container_torch:latest
+    image: girondi/super_container_tvm:latest
     hostname: server
     container_name: csd_server
     networks:
@@ -23,15 +23,21 @@ services:
               #count: 1
               device_ids: [ "${GPU_ID}" ]
               capabilities: [gpu]
+    cap_add:
+      - SYS_PTRACE
+      - SYSLOG
+      - PERFMON
     volumes:
       - ./workspace:/workspace
       - ./home:/home/${DOCKERUSER}
+      - type: tmpfs
+        target: /tmp
     devices:
       - ${SERVER_IBDEV}
       #- /dev/infiniband/rdma_cm
     restart: unless-stopped
   client:
-    image: girondi/super_container_torch:latest
+    image: girondi/super_container_tvm:latest
     hostname: client
     container_name: csd_client
     networks:
@@ -46,7 +52,26 @@ services:
     volumes:
       - ./workspace:/workspace
       - ./home:/home/${DOCKERUSER}
+      - type: tmpfs
+        target: /tmp
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: 32
+          memory: 64G
+        reservations:
+          #cpus: 4
+          memory: 4G
+          devices:
+            - driver: nvidia
+              #count: 1
+              device_ids: [ "${GPU_ID}" ]
+              capabilities: [gpu]
+    cap_add:
+      - SYS_PTRACE
+      - SYSLOG
+      - PERFMON
       #  tcpdump_server:
       #image: mellanox/tcpdump-rdma 
       #command: tcpdump -i mlx5_2 -vvv -l -n 
